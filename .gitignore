@@ -1,8 +1,8 @@
 __pycache__/
 *.pyc
 *.pyo
-.env
-.venv
+env
+venv
 
 # VS Code
 .vscode/

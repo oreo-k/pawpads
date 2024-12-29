@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dog Food Search</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Dog Food Search</h1>
+
+    <!-- 検索フォーム -->
+    <form method="get" action="{% url 'search_dogfood' %}">
+        <input type="text" name="query" placeholder="Enter search term" value="{{ query }}">
+        <button type="submit">Search</button>
+    </form>
+
+    <h2>Results:</h2>
+    {% if results %}
+        <ul>
+            {% for food in results %}
+                <li>
+                    <strong>{{ food.name }}</strong> - Protein: {{ food.protein }}%, Fat: {{ food.fat }}%, Fiber: {{ food.fiber }}%
+                </li>
+            {% endfor %}
+        </ul>
+
+        <!-- グラフの描画エリア -->
+        <canvas id="nutritionChart"></canvas>
+        <script>
+            // Chart.js グラフデータ生成
+            const ctx = document.getElementById('nutritionChart').getContext('2d');
+            const data = {
+                labels: ['Protein', 'Fat', 'Fiber'],
+                datasets: [
+                    {% for food in results %}
+                    {
+                        label: '{{ food.name }}',
+                        data: [{{ food.protein }}, {{ food.fat }}, {{ food.fiber }}],
+                        borderWidth: 1,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                    },
+                    {% endfor %}
+                ]
+            };
+
+            const config = {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            };
+
+            // グラフ描画
+            const nutritionChart = new Chart(ctx, config);
+        </script>
+    {% else %}
+        <p>No results found.</p>
+    {% endif %}
+</body>
+</html>

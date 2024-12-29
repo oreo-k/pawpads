@@ -16,7 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from core.views import hello_world
+from core.views import search_dogfood
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', hello_world),
+    path('search_dogfood/', search_dogfood, name='search_dogfood'), # search page
 ]
