@@ -10,7 +10,7 @@ struct WalkStampGrid: View {
             calendar.date(byAdding: .day, value: -offset, to: Date())
         }.reversed()
     }
-
+    
     var body: some View {
         let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 7)
 

@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 386DB1562DBCB6530098087D /* Build configuration list for PBXProject "Pawpads" */;
+			buildConfigurationList = 386DB1562DBCB6530098087D /* Build configuration list for PBXProject "pawpads" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -554,7 +554,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		386DB1562DBCB6530098087D /* Build configuration list for PBXProject "Pawpads" */ = {
+		386DB1562DBCB6530098087D /* Build configuration list for PBXProject "pawpads" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				386DB1832DBCB6560098087D /* Debug */,

@@ -88,7 +88,7 @@ struct ContentView: View {
                         Text("移動距離: \(String(format: "%.2f", locationManager.distance)) m")
                             .font(.title3)
 
-                        Map(coordinateRegion: $region)
+                        CurrentLocationMapView(locationManager: locationManager)
                             .frame(height: 200)
                             .cornerRadius(12)
                             .padding()
