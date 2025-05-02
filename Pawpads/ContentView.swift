@@ -17,15 +17,21 @@ struct ContentView: View {
     @StateObject private var locationManager = LocationManager()
     @Environment(\.managedObjectContext) private var viewContext
 
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \WalkLog.date, ascending: true)],
+        animation: .default
+    )
+    private var walkLogs: FetchedResults<WalkLog>
+
     var body: some View {
         TabView {
-            VStack(spacing: 20) {
-                Text("ホーム画面")
-                    .font(.largeTitle)
-                    .padding()
-
-                HStack(spacing: 20) {
-                    if !locationManager.isWalking {
+            VStack {
+                if !locationManager.isWalking {
+                    VStack{
+                        WalkStampGrid(walkLogs: walkLogs) 
+                        Text("お散歩を開始しましょう！")
+                            .font(.largeTitle)
+                            .padding()
                         Button(action: {
                             startWalking()
                         }) {
@@ -37,42 +43,6 @@ struct ContentView: View {
                                 .foregroundColor(.white)
                                 .clipShape(Circle())
                         }
-                    } else if locationManager.isWalking && !locationManager.isPaused {
-                        Button(action: {
-                            pauseWalking()
-                        }) {
-                            Text("PAUSE")
-                                .font(.title2)
-                                .padding()
-                                .frame(width: 100, height: 100)
-                                .background(Color.yellow)
-                                .foregroundColor(.white)
-                                .clipShape(Circle())
-                        }
-                    } else if locationManager.isWalking && locationManager.isPaused {
-                        Button(action: {
-                            resumeWalking()
-                        }) {
-                            Text("RESUME")
-                                .font(.title2)
-                                .padding()
-                                .frame(width: 100, height: 100)
-                                .background(Color.blue)
-                                .foregroundColor(.white)
-                                .clipShape(Circle())
-                        }
-                    }
-
-                    Button(action: {
-                        showSaveAlert = true
-                    }) {
-                        Text("FINISH")
-                            .font(.title)
-                            .padding()
-                            .frame(width: 100, height: 100)
-                            .background(Color.red)
-                            .foregroundColor(.white)
-                            .clipShape(Circle())
                     }
                 }
 
@@ -84,7 +54,7 @@ struct ContentView: View {
 
                         Text("経過時間: \(formatElapsedTime())")
                             .font(.title3)
-                        
+
                         Text("移動距離: \(String(format: "%.2f", locationManager.distance)) m")
                             .font(.title3)
 
@@ -92,31 +62,54 @@ struct ContentView: View {
                             .frame(height: 200)
                             .cornerRadius(12)
                             .padding()
-                    }
-                    .onReceive(locationManager.$currentLocation) { newLocation in
-                        if let newLocation = newLocation {
-                            region.center = newLocation
+
+                        HStack(spacing: 20) {
+                            if !locationManager.isPaused {
+                                Button(action: pauseWalking) {
+                                    Text("PAUSE")
+                                        .font(.title2)
+                                        .padding()
+                                        .frame(width: 100, height: 100)
+                                        .background(Color.yellow)
+                                        .foregroundColor(.white)
+                                        .clipShape(Circle())
+                                }
+                            } else {
+                                Button(action: resumeWalking) {
+                                    Text("RESUME")
+                                        .font(.title2)
+                                        .padding()
+                                        .frame(width: 100, height: 100)
+                                        .background(Color.blue)
+                                        .foregroundColor(.white)
+                                        .clipShape(Circle())
+                                }
+                            }
+
+                            Button(action: {
+                                showSaveAlert = true
+                            }) {
+                                Text("FINISH")
+                                    .font(.title)
+                                    .padding()
+                                    .frame(width: 100, height: 100)
+                                    .background(Color.red)
+                                    .foregroundColor(.white)
+                                    .clipShape(Circle())
+                            }
                         }
                     }
-                } else {
-                    Text("散歩を開始してください")
-                        .font(.title2)
-                        .foregroundColor(.gray)
-                        .padding()
+                    .onReceive(locationManager.$currentLocation) { newLoc in
+                        if let loc = newLoc {
+                            region.center = loc
+                        }
+                    }
                 }
-            }
-            .tabItem {
-                Image(systemName: "house.fill")
-                Text("ホーム")
-            }
-            .alert("この散歩を保存しますか？", isPresented: $showSaveAlert) {
-                Button("保存しない", role: .cancel) {
-                    finishWalking(save: false)
                 }
-                Button("保存する", role: .none) {
-                    finishWalking(save: true)
+                .tabItem {
+                    Image(systemName: "house.fill")
+                    Text("ホーム")
                 }
-            }
 
             WalkMainView()
                 .tabItem {
@@ -136,7 +129,16 @@ struct ContentView: View {
                     Text("設定")
                 }
         }
+        .alert("この散歩を保存しますか？", isPresented: $showSaveAlert) {
+            Button("保存しない", role: .cancel) {
+                finishWalking(save: false)
+            }
+            Button("保存する", role: .none) {
+                finishWalking(save: true)
+            }
+        }
     }
+
 
     private func startWalking() {
         locationManager.isWalking = true
