@@ -11,7 +11,7 @@ struct ContentView: View {
     @State private var showSaveAlert = false
     @State private var region = MKCoordinateRegion(
     center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), // 初期値（例: サンフランシスコ）
-    span: MKCoordinateSpan(latitudeDelta: 0.0005, longitudeDelta: 0.0005)
+    span: MKCoordinateSpan(latitudeDelta: 0.00001, longitudeDelta: 0.00001)
     )
 
     @StateObject private var locationManager = LocationManager()
@@ -28,7 +28,11 @@ struct ContentView: View {
             VStack {
                 if !locationManager.isWalking {
                     VStack{
-                        WalkStampGrid(walkLogs: walkLogs) 
+                        Text("最近の散歩記録")
+                            .font(.headline)
+                            .padding(.leading)
+                        WalkStampGridView()
+                            .padding(.horizontal)
                         Text("お散歩を開始しましょう！")
                             .font(.largeTitle)
                             .padding()

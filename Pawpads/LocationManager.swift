@@ -15,6 +15,8 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     @Published var distance: Double = 0.0 // 総移動距離（メートル）
     @Published var currentLocation: CLLocationCoordinate2D? = nil
+    @Published var walkCoordinates: [CLLocationCoordinate2D] = []
+
 
     private var locationManager: CLLocationManager = CLLocationManager()
     private var lastLocation: CLLocation?

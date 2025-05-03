@@ -10,7 +10,7 @@ struct WalkMainView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-                WalkStampGrid(walkLogs: walkLogs) 
+                WalkStampGridView()
                 Spacer()
 
                 NavigationLink(destination: WalkLogListView()) {
