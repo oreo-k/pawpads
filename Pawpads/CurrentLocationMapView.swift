@@ -6,7 +6,7 @@ struct CurrentLocationMapView: View {
 
     @State private var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 35.0, longitude: 135.0), // 仮の初期値
-        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+        span: MKCoordinateSpan(latitudeDelta: 0.003, longitudeDelta: 0.003)
     )
 
     var body: some View {
