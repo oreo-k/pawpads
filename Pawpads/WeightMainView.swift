@@ -5,7 +5,7 @@ struct WeightMainView: View {
         NavigationView {
             VStack(spacing: 20) {
                 NavigationLink(destination: WeightLogView()) {
-                    Text("新しい体重を記録する")
+                    Text("Record New Weight")
                         .font(.title2)
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -15,7 +15,7 @@ struct WeightMainView: View {
                 }
 
                 NavigationLink(destination: WeightLogListView()) {
-                    Text("過去の体重履歴を見る")
+                    Text("View Past Walks")
                         .font(.title2)
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -25,7 +25,7 @@ struct WeightMainView: View {
                 }
                 
                 NavigationLink(destination: WeightGraphView()) {
-                    Text("体重推移グラフを見る")
+                    Text("View Weight Graph")
                         .font(.title2)
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -35,7 +35,7 @@ struct WeightMainView: View {
                 }
             }
             .padding()
-            .navigationTitle("体重管理")
+            .navigationTitle("Weight Record")
         }
     }
 }

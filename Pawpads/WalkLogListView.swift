@@ -13,16 +13,16 @@ struct WalkLogListView: View {
             List {
                 ForEach(walkLogs) { log in
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("日付: \(log.date ?? Date(), formatter: dateFormatter)")
+                        Text("Date: \(log.date ?? Date(), formatter: dateFormatter)")
                             .font(.headline)
-                        Text("距離: \(String(format: "%.2f", log.distance)) m")
-                        Text("時間: \(String(format: "%.0f", log.duration)) 秒")
-                        Text("時間: \(String(format: "%.0f", log.durationMinutes)) min")
+                        Text("Distance: \(String(format: "%.2f", log.distance)) m")
+                        Text("Duration[s]: \(String(format: "%.0f", log.duration)) 秒")
+                        Text("Duration[min]: \(String(format: "%.0f", log.durationMinutes)) min")
                     }
                     .padding(.vertical, 4)
                 }
             }
-            .navigationTitle("散歩履歴一覧")
+            .navigationTitle("Walk History")
         }
     }
 }

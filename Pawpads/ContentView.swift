@@ -28,9 +28,9 @@ struct ContentView: View {
             VStack {
                 if !locationManager.isWalking {
                     VStack{
-                        WalkStampGridView()
+                        WalkStampGrid()
                             .padding(.horizontal)
-                        Text("お散歩を開始しましょう！")
+                        Text("Shall We Walking??")
                             .font(.largeTitle)
                             .padding()
                         Button(action: {
@@ -49,14 +49,14 @@ struct ContentView: View {
 
                 if locationManager.isWalking {
                     VStack(spacing: 10) {
-                        Text(locationManager.isPaused ? "一時停止中です" : "散歩中です！")
+                        Text(locationManager.isPaused ? "Paused..." : "Walking...")
                             .font(.title2)
                             .foregroundColor(locationManager.isPaused ? .gray : .green)
 
-                        Text("経過時間: \(formatElapsedTime())")
+                        Text("Duration: \(formatElapsedTime()) min")
                             .font(.title3)
 
-                        Text("移動距離: \(String(format: "%.2f", locationManager.distance)) m")
+                        Text("Distance: \(String(format: "%.2f", locationManager.distance)) m")
                             .font(.title3)
 
                         CurrentLocationMapView(locationManager: locationManager)
@@ -109,32 +109,32 @@ struct ContentView: View {
                 }
                 .tabItem {
                     Image(systemName: "house.fill")
-                    Text("ホーム")
+                    Text("HOME")
                 }
 
             WalkMainView()
                 .tabItem {
                     Image(systemName: "pawprint.fill")
-                    Text("散歩記録")
+                    Text("Walking Record")
                 }
 
             WeightMainView()
                 .tabItem {
                     Image(systemName: "scalemass")
-                    Text("体重")
+                    Text("Weight")
                 }
 
             SettingsView()
                 .tabItem {
                     Image(systemName: "gearshape.fill")
-                    Text("設定")
+                    Text("Setting")
                 }
         }
-        .alert("この散歩を保存しますか？", isPresented: $showSaveAlert) {
-            Button("保存しない", role: .cancel) {
+        .alert("Do you want to save?", isPresented: $showSaveAlert) {
+            Button("Discard", role: .cancel) {
                 finishWalking(save: false)
             }
-            Button("保存する", role: .none) {
+            Button("Save", role: .none) {
                 finishWalking(save: true)
             }
         }
@@ -202,9 +202,9 @@ struct ContentView: View {
         
         do {
             try viewContext.save()
-            print("散歩ログ保存完了！")
+            print("Completed to Save")
         } catch {
-            print("保存失敗: \(error.localizedDescription)")
+            print("Failed to Save: \(error.localizedDescription)")
         }
     }
 

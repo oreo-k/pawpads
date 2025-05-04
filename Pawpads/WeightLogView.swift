@@ -22,17 +22,17 @@ struct WeightLogView: View {
         NavigationView {
             Form {
 
-                Section(header: Text("飼い主の体重（kg, 任意）")) {
+                Section(header: Text("Your Weight (kg)")) {
                     TextField("例: 65.0", text: $ownerWeightKg)
                         .keyboardType(.decimalPad)
                 }
 
-                Section(header: Text("抱っこした時の体重（kg）")) {
+                Section(header: Text("Your Dog+ Your Weight(kg)")) {
                     TextField("例: 78.5", text: $holdingWeightKg)
                         .keyboardType(.decimalPad)
                 }
 
-                Section(header: Text("愛犬の体重（kg）")) {
+                Section(header: Text("Your Dog Weigh(kg)")) {
                     TextField("例: 12.5", text: $weightKg)
                         .keyboardType(.decimalPad)
                 }
@@ -40,7 +40,7 @@ struct WeightLogView: View {
                 Button(action: {
                     calculateDogWeight()
                 }) {
-                    Text("犬の体重を計算する")
+                    Text("Calculate your dog's weight")
                         .font(.subheadline)
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -53,13 +53,13 @@ struct WeightLogView: View {
                     saveWeightLog()
                     showSaveAlert = true
                 }) {
-                    Text("体重を保存する")
+                    Text("Save Weight")
                         .font(.headline)
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
             }
-            .navigationTitle("体重記録")
-            .alert("保存しました！", isPresented: $showSaveAlert) {
+            .navigationTitle("Weight Record")
+            .alert("Saved！", isPresented: $showSaveAlert) {
                 Button("OK", role: .cancel) { }
             }
         }
@@ -88,11 +88,11 @@ struct WeightLogView: View {
 
         do {
             try viewContext.save()
-            print("体重記録保存完了！")
+            print("Saved New Weight！")
             weightKg = ""
             ownerWeightKg = ""
         } catch {
-            print("保存エラー: \(error.localizedDescription)")
+            print("Failed to Save...: \(error.localizedDescription)")
         }
     }
 }

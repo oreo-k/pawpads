@@ -23,10 +23,10 @@ struct WeightLogListView: View {
                         Text(dateFormatter.string(from: log.date ?? Date()))
                             .font(.headline)
                         VStack(alignment: .leading) {
-                            Text("愛犬: \(String(format: "%.2f", log.weightKg)) kg / \(String(format: "%.2f", log.weightLbs)) lbs")
+                            Text("Your Pal: \(String(format: "%.2f", log.weightKg)) kg / \(String(format: "%.2f", log.weightLbs)) lbs")
                                 .font(.subheadline)
                             if log.ownerWeightKg != 0 && log.ownerWeightLbs != 0 {
-                                Text("飼い主: \(String(format: "%.2f", log.ownerWeightKg)) kg / \(String(format: "%.2f", log.ownerWeightLbs)) lbs")
+                                Text("You: \(String(format: "%.2f", log.ownerWeightKg)) kg / \(String(format: "%.2f", log.ownerWeightLbs)) lbs")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
                             }
@@ -35,7 +35,7 @@ struct WeightLogListView: View {
                     .padding(.vertical, 4)
                 }
             }
-            .navigationTitle("体重記録履歴")
+            .navigationTitle("Weight Log History")
         }
     }
 }

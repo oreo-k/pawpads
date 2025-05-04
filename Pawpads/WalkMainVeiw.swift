@@ -10,11 +10,11 @@ struct WalkMainView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-                WalkStampGridView()
+                WalkStampGrid()
                 Spacer()
 
                 NavigationLink(destination: WalkLogListView()) {
-                    Text("過去の散歩記録を見る")
+                    Text("View Past Walks")
                         .font(.title2)
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -24,7 +24,7 @@ struct WalkMainView: View {
                 }
 
                 NavigationLink(destination: WalkGraphView()) {
-                    Text("散歩量推移グラフを見る")
+                    Text("View Walk Graph")
                         .font(.title2)
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -34,7 +34,7 @@ struct WalkMainView: View {
                 }
             }
             .padding()
-            .navigationTitle("散歩記録メニュー")
+            .navigationTitle("Walking Record")
         }
     }
 }

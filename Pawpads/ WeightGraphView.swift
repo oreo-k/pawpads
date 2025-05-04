@@ -23,7 +23,7 @@ struct WeightGraphView: View {
 
                     // 🐾 愛犬体重グラフ
                     VStack(alignment: .leading) {
-                        Text("愛犬の体重推移")
+                        Text("Trend Your Dog's Weight")
                             .font(.title3)
                             .bold()
                             .padding(.leading)
@@ -32,15 +32,15 @@ struct WeightGraphView: View {
                             ForEach(weightLogs) { log in
                                 if log.weightKg != 0 {
                                     LineMark(
-                                        x: .value("日付", log.date ?? Date()),
-                                        y: .value("体重 (kg)", log.weightKg)
+                                        x: .value("Date", log.date ?? Date()),
+                                        y: .value("Weight (kg)", log.weightKg)
                                     )
                                     .symbol(Circle())
                                     .foregroundStyle(Color.blue)
                                 }
                             }
                         }
-                        .chartYAxisLabel("体重 (kg)", position: .leading)
+                        .chartYAxisLabel("Weight (kg)", position: .leading)
                         .chartYScale(domain: dogMin...dogMax) // ← ここ追加
                         .frame(height: 250)
                         .padding()
@@ -48,7 +48,7 @@ struct WeightGraphView: View {
 
                     // 🧍‍♂️ 飼い主体重グラフ
                     VStack(alignment: .leading) {
-                        Text("飼い主の体重推移")
+                        Text("Trend Your Weight")
                             .font(.title3)
                             .bold()
                             .padding(.leading)
@@ -57,15 +57,15 @@ struct WeightGraphView: View {
                             ForEach(weightLogs) { log in
                                 if log.ownerWeightKg != 0 {
                                     LineMark(
-                                        x: .value("日付", log.date ?? Date()),
-                                        y: .value("体重 (kg)", log.ownerWeightKg)
+                                        x: .value("Date", log.date ?? Date()),
+                                        y: .value("Weight (kg)", log.ownerWeightKg)
                                     )
                                     .symbol(Circle())
                                     .foregroundStyle(Color.green)
                                 }
                             }
                         }
-                        .chartYAxisLabel("体重 (kg)", position: .leading)
+                        .chartYAxisLabel("Weight (kg)", position: .leading)
                         .chartYScale(domain: ownerMin...ownerMax) // ← ここ追加
                         .frame(height: 250)
                         .padding()
@@ -73,7 +73,7 @@ struct WeightGraphView: View {
                 }
                 .padding(.vertical)
             }
-            .navigationTitle("体重推移グラフ")
+            .navigationTitle("Trend Weight")
         }
     }
 }

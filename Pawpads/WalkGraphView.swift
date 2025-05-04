@@ -28,7 +28,7 @@ struct WalkGraphView: View {
 
                     // 🐾 散歩距離グラフ
                     VStack(alignment: .leading) {
-                        Text("散歩距離推移")
+                        Text("Trend Walking Distance")
                             .font(.title3)
                             .bold()
                             .padding(.leading)
@@ -37,15 +37,15 @@ struct WalkGraphView: View {
                             ForEach(walkLogs) { log in
                                 if log.distance != 0 {
                                     LineMark(
-                                        x: .value("日付", log.date ?? Date()),
-                                        y: .value("距離 (km)", log.distanceKilo)
+                                        x: .value("Date", log.date ?? Date()),
+                                        y: .value("Distance (km)", log.distanceKilo)
                                     )
                                     .symbol(Circle())
                                     .foregroundStyle(Color.blue)
                                 }
                             }
                         }
-                        .chartYAxisLabel("距離 (km)", position: .leading)
+                        .chartYAxisLabel("Distance (km)", position: .leading)
                         .chartYScale(domain: distanceKiloMin...distanceKiloMax)
                         .frame(height: 250)
                         .padding()
@@ -53,7 +53,7 @@ struct WalkGraphView: View {
 
                     // 🧍‍♂️ 散歩時間グラフ
                     VStack(alignment: .leading) {
-                        Text("散歩時間推移")
+                        Text("Trend Walking Time")
                             .font(.title3)
                             .bold()
                             .padding(.leading)
@@ -62,15 +62,15 @@ struct WalkGraphView: View {
                             ForEach(walkLogs) { log in
                                 if log.duration != 0 {
                                     LineMark(
-                                        x: .value("日付", log.date ?? Date()),
-                                        y: .value("時間 (min)", log.durationMinutes)
+                                        x: .value("Date", log.date ?? Date()),
+                                        y: .value("Time (min)", log.durationMinutes)
                                     )
                                     .symbol(Circle())
                                     .foregroundStyle(Color.green)
                                 }
                             }
                         }
-                        .chartYAxisLabel("時間 (min)", position: .leading)
+                        .chartYAxisLabel("Time (min)", position: .leading)
                         .chartYScale(domain: durationMinutesMin...durationMinutesMax)
                         .frame(height: 250)
                         .padding()
@@ -78,7 +78,7 @@ struct WalkGraphView: View {
                 }
                 .padding(.vertical)
             }
-            .navigationTitle("散歩量推移グラフ")
+            .navigationTitle("Walking Trend Chart")
         }
     }
 }

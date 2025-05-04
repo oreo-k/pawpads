@@ -4,27 +4,27 @@ struct SettingsView: View {
     @State private var dogName: String = ""
     @State private var birthDate: Date = Date()
     @State private var breed: String = ""
-    @State private var gender: String = "オス"
+    @State private var gender: String = "Male"
     
-    let genders = ["オス", "メス"]
+    let genders = ["Male", "Female"]
 
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("名前")) {
-                    TextField("例: Macちゃん", text: $dogName)
+                Section(header: Text("Name")) {
+                    TextField("ex) Mac", text: $dogName)
                 }
                 
-                Section(header: Text("誕生日")) {
-                    DatePicker("誕生日", selection: $birthDate, displayedComponents: .date)
+                Section(header: Text("Date Birth")) {
+                    DatePicker("Date Birth", selection: $birthDate, displayedComponents: .date)
                 }
                 
-                Section(header: Text("犬種")) {
-                    TextField("例: フレンチブルドッグ", text: $breed)
+                Section(header: Text("Breed")) {
+                    TextField("ex) French Bulldog", text: $breed)
                 }
                 
-                Section(header: Text("性別")) {
-                    Picker("性別", selection: $gender) {
+                Section(header: Text("Sex")) {
+                    Picker("Sex", selection: $gender) {
                         ForEach(genders, id: \.self) { gender in
                             Text(gender)
                         }
@@ -36,13 +36,13 @@ struct SettingsView: View {
                     Button(action: {
                         saveProfile()
                     }) {
-                        Text("プロフィールを保存する")
+                        Text("Save Profile")
                             .font(.headline)
                             .frame(maxWidth: .infinity, alignment: .center)
                     }
                 }
             }
-            .navigationTitle("設定")
+            .navigationTitle("Setting")
             .onAppear {
                 loadProfile()
             }
@@ -70,6 +70,6 @@ struct SettingsView: View {
         UserDefaults.standard.set(breed, forKey: "breed")
         UserDefaults.standard.set(gender, forKey: "gender")
         
-        print("プロフィール保存完了！")
+        print("Complete Saving!")
     }
 }
