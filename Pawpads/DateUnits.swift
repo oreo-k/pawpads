@@ -2,8 +2,13 @@ import Foundation
 
 struct DateUtils {
     static func generateCalendarMatrix() -> [[Date?]] {
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
+        let calendar: Calendar = {
+            var calendar = Calendar.current
+            calendar.firstWeekday = 2 // 日曜始まり
+            return calendar
+        }()
+
+        let today = Date()
         let thisWeekStart = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: today))!
 
         var matrix: [[Date?]] = []
@@ -14,13 +19,17 @@ struct DateUtils {
             var week: [Date?] = []
             for dayOffset in 0..<7 {
                 if let day = calendar.date(byAdding: .day, value: dayOffset, to: weekStart) {
-                    week.append(day > today ? nil : day)
+                    if day > today {
+                        week.append(nil)
+                    } else {
+                        week.append(day)
+                    }
                 }
             }
             matrix.append(week)
         }
 
-        return matrix
+    return matrix
     }
 
     static func isSameDay(_ d1: Date, _ d2: Date) -> Bool {

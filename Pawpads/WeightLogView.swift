@@ -23,17 +23,17 @@ struct WeightLogView: View {
             Form {
 
                 Section(header: Text("Your Weight (kg)")) {
-                    TextField("例: 65.0", text: $ownerWeightKg)
+                    TextField("ex: 65.0", text: $ownerWeightKg)
                         .keyboardType(.decimalPad)
                 }
 
                 Section(header: Text("Your Dog+ Your Weight(kg)")) {
-                    TextField("例: 78.5", text: $holdingWeightKg)
+                    TextField("ex: 78.5", text: $holdingWeightKg)
                         .keyboardType(.decimalPad)
                 }
 
                 Section(header: Text("Your Dog Weigh(kg)")) {
-                    TextField("例: 12.5", text: $weightKg)
+                    TextField("ex: 12.5", text: $weightKg)
                         .keyboardType(.decimalPad)
                 }
 
