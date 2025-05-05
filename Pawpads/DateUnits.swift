@@ -4,7 +4,7 @@ struct DateUtils {
     static func generateCalendarMatrix() -> [[Date?]] {
         let calendar: Calendar = {
             var calendar = Calendar.current
-            calendar.firstWeekday = 2 // 日曜始まり
+            calendar.firstWeekday = 2 // 月曜始まり
             return calendar
         }()
 

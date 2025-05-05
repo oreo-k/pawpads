@@ -16,13 +16,11 @@ struct WeightGraphView: View {
                     let latestDogWeight = weightLogs.last?.weightKg ?? 10.0
                     let latestOwnerWeight = weightLogs.last?.ownerWeightKg ?? 60.0
 
-                    //let dogMin = latestDogWeight * 0.8
-                    //let dogMax = latestDogWeight * 1.2
-                    let dogMin = weightLogs.map{$0.weightKg}.min() ?? 0
-                    let dogMax = weightLogs.map{$0.weightKg}.max() ?? 0
+                    let dogMin = weightLogs.map{ $0.weightKg }.min() ?? 0
+                    let dogMax = weightLogs.map{ $0.weightKg }.max() ?? 0
                     
-                    let ownerMin = latestOwnerWeight * 0.8
-                    let ownerMax = latestOwnerWeight * 1.2
+                    let ownerMin = weightLogs.map{ $0.ownerWeightKg }.min() ?? 0
+                    let ownerMax = weightLogs.map{ $0.ownerWeightKg }.max() ?? 0
 
                     // 🐾 愛犬体重グラフ
                     VStack(alignment: .leading) {
