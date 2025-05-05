@@ -12,14 +12,16 @@ struct WalkLogListView: View {
         NavigationView {
             List {
                 ForEach(walkLogs) { log in
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Date: \(log.date ?? Date(), formatter: dateFormatter)")
-                            .font(.headline)
-                        Text("Distance: \(String(format: "%.2f", log.distance)) m")
-                        Text("Duration[s]: \(String(format: "%.0f", log.duration)) 秒")
-                        Text("Duration[min]: \(String(format: "%.0f", log.durationMinutes)) min")
+                    NavigationLink(destination: WalkLogDetailView(walkLog: log)) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Date: \(log.date ?? Date(), formatter: dateFormatter)")
+                                .font(.headline)
+                            Text("Distance: \(String(format: "%.2f", log.distance)) m")
+                            Text("Duration[s]: \(String(format: "%.0f", log.duration)) 秒")
+                            Text("Duration[min]: \(String(format: "%.0f", log.durationMinutes)) min")
+                        }
+                        .padding(.vertical, 4)
                     }
-                    .padding(.vertical, 4)
                 }
             }
             .navigationTitle("Walk History")
