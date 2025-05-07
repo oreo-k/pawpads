@@ -10,8 +10,8 @@ struct ContentView: View {
     @State private var timer: Timer? = nil
     @State private var showSaveAlert = false
     @State private var region = MKCoordinateRegion(
-    center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), // 初期値（例: サンフランシスコ）
-    span: MKCoordinateSpan(latitudeDelta: 0.003, longitudeDelta: 0.003)
+    center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), // 初期値（例: Portland）
+    span: MKCoordinateSpan(latitudeDelta: 0.0001, longitudeDelta: 0.0001)
     )
 
     @StateObject private var locationManager = LocationManager()
@@ -36,8 +36,8 @@ struct ContentView: View {
                         Button(action: {
                             startWalking()
                         }) {
-                            Text("START")
-                                .font(.system(size: 28, weight: .bold))
+                            Image(systemName:"play")
+                                .font(.system(size: 30, weight: .bold))
                                 .padding()
                                 .frame(width: 100, height: 100)
                                 .background(Color.green)
@@ -53,13 +53,13 @@ struct ContentView: View {
                             .font(.title2)
                             .foregroundColor(locationManager.isPaused ? .gray : .green)
 
-                        Text("Duration: \(formatElapsedTime()) min")
+                        Text("Duration: \(formatElapsedTime()) sec")
                             .font(.title3)
 
                         Text("Distance: \(String(format: "%.2f", locationManager.distance)) m")
                             .font(.title3)
 
-                        CurrentLocationMapView(locationManager: locationManager)
+                        WalkRouteMapView(locationManager: locationManager)
                             .frame(height: 200)
                             .cornerRadius(12)
                             .padding()
@@ -67,8 +67,8 @@ struct ContentView: View {
                         HStack(spacing: 20) {
                             if !locationManager.isPaused {
                                 Button(action: pauseWalking) {
-                                    Text("PAUSE")
-                                        .font(.system(size: 22, weight: .bold))
+                                    Image(systemName:"pause")
+                                        .font(.system(size:30, weight: .bold))
                                         .padding()
                                         .frame(width: 100, height: 100)
                                         .background(Color.yellow)
@@ -77,8 +77,8 @@ struct ContentView: View {
                                 }
                             } else {
                                 Button(action: resumeWalking) {
-                                    Text("RESUME")
-                                        .font(.system(size: 22, weight: .bold))
+                                    Image(systemName:"play")
+                                        .font(.system(size: 30, weight: .bold))
                                         .padding()
                                         .frame(width: 100, height: 100)
                                         .background(Color.blue)
@@ -90,8 +90,8 @@ struct ContentView: View {
                             Button(action: {
                                 showSaveAlert = true
                             }) {
-                                Text("FINISH")
-                                    .font(.system(size: 22, weight: .bold))
+                                Image(systemName:"stop")
+                                    .font(.system(size: 30, weight: .bold))
                                     .padding()
                                     .frame(width: 100, height: 100)
                                     .background(Color.red)
@@ -129,6 +129,12 @@ struct ContentView: View {
                     Image(systemName: "gearshape.fill")
                     Text("Setting")
                 }
+
+            DebugTestMapView()
+                .tabItem {
+                    Image(systemName: "location.circle")
+                    Text("Test Map")
+    }
         }
         .alert("Do you want to save?", isPresented: $showSaveAlert) {
             Button("Discard", role: .cancel) {

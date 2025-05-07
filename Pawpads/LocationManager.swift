@@ -37,7 +37,10 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
                 let delta = location.distance(from: last) // 直前地点との距離（メートル）
                 if delta > 1.0 { // 小さい揺れは無視（1m以上動いたら加算）
                     distance += delta
+                    walkCoordinates.append(location.coordinate)
                 }
+            } else {
+                walkCoordinates.append(location.coordinate)
             }
             lastLocation = location
         }
