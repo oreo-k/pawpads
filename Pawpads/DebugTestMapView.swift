@@ -9,7 +9,7 @@ struct IdentifiableCoordinate: Identifiable {
 */
 struct DebugTestMapView: View {
     @State private var region = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), // Portland
+        center: CLLocationCoordinate2D(latitude: 45.512794, longitude: -122.679565), // Portland
         span: MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
     )
 
@@ -32,6 +32,6 @@ struct DebugTestMapView: View {
     }
 
     var testPin: [IdentifiableCoordinate] {
-        [IdentifiableCoordinate(coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194))]
+        [IdentifiableCoordinate(coordinate: CLLocationCoordinate2D(latitude: 45.512794, longitude: -122.679565))]
     }
 }

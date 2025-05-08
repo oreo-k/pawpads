@@ -5,8 +5,8 @@ struct WalkRouteMapView: View {
     @ObservedObject var locationManager: LocationManager
 
     @State private var region = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
-        span: MKCoordinateSpan(latitudeDelta: 0.0001, longitudeDelta: 0.0001)
+        center: CLLocationCoordinate2D(latitude: 45.512794, longitude: -122.679565),
+        span: MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
     )
 
     var body: some View {
@@ -16,11 +16,10 @@ struct WalkRouteMapView: View {
                     Image(systemName: "pawprint.fill")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .foregroundColor(.red)
-                        .background(Color.white)
-                        .frame(width: 40, height: 40)
+                        .foregroundColor(.blue)
+                        .frame(width: 25, height: 25)
                         .clipShape(Circle())
-                        .shadow(radius: 5)
+                        .shadow(radius: 4)
                 }
             }
         .overlay(
@@ -28,17 +27,31 @@ struct WalkRouteMapView: View {
         )
         .onReceive(locationManager.$currentLocation) { newLoc in
             if let loc = newLoc {
-                region.center = loc
+                region = MKCoordinateRegion(
+                    center: loc,
+                    span: MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
+                )
+                //print("現在地に中心移動: \(loc.latitude), \(loc.longitude)")//
             }
         }
         .frame(height: 200)
         .cornerRadius(12)
         .padding()
     }
+    /*
     private var currentPin: [IdentifiableCoordinate] {
-        if let loc = locationManager.currentLocation {
+        let loc = locationManager.currentLocation {
             print("ピン表示座標:\(loc.latitude), \(loc.longitude)")
             return [IdentifiableCoordinate(coordinate: loc)]
+        }
+    }
+    */
+    private var currentPin: [IdentifiableCoordinate] {
+        if let loc = locationManager.currentLocation {
+            //print("ピン表示座標:\(loc.latitude), \(loc.longitude)")//
+            return [IdentifiableCoordinate(coordinate: CLLocationCoordinate2D(
+                latitude:loc.latitude, longitude: loc.longitude))
+            ]
         } else {
             return []
         }
