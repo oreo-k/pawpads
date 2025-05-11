@@ -36,8 +36,8 @@ struct ContentView: View {
                         Button(action: {
                             startWalking()
                         }) {
-                            Text("START")
-                                .font(.system(size: 28, weight: .bold))
+                            Image(systemName:"play")
+                                .font(.system(size: 30, weight: .bold))
                                 .padding()
                                 .frame(width: 100, height: 100)
                                 .background(Color.green)
@@ -53,7 +53,7 @@ struct ContentView: View {
                             .font(.title2)
                             .foregroundColor(locationManager.isPaused ? .gray : .green)
 
-                        Text("Duration: \(formatElapsedTime()) min")
+                        Text("Duration: \(formatElapsedTime()) sec")
                             .font(.title3)
 
                         Text("Distance: \(String(format: "%.2f", locationManager.distance)) m")
@@ -67,8 +67,8 @@ struct ContentView: View {
                         HStack(spacing: 20) {
                             if !locationManager.isPaused {
                                 Button(action: pauseWalking) {
-                                    Text("PAUSE")
-                                        .font(.system(size: 22, weight: .bold))
+                                    Image(systemName:"pause")
+                                        .font(.system(size:30, weight: .bold))
                                         .padding()
                                         .frame(width: 100, height: 100)
                                         .background(Color.yellow)
@@ -77,8 +77,8 @@ struct ContentView: View {
                                 }
                             } else {
                                 Button(action: resumeWalking) {
-                                    Text("RESUME")
-                                        .font(.system(size: 22, weight: .bold))
+                                    Image(systemName:"play")
+                                        .font(.system(size: 30, weight: .bold))
                                         .padding()
                                         .frame(width: 100, height: 100)
                                         .background(Color.blue)
@@ -90,8 +90,8 @@ struct ContentView: View {
                             Button(action: {
                                 showSaveAlert = true
                             }) {
-                                Text("FINISH")
-                                    .font(.system(size: 22, weight: .bold))
+                                Image(systemName:"stop")
+                                    .font(.system(size: 30, weight: .bold))
                                     .padding()
                                     .frame(width: 100, height: 100)
                                     .background(Color.red)

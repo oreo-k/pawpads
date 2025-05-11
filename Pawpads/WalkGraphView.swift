@@ -17,13 +17,14 @@ struct WalkGraphView: View {
                     let latestDuration = walkLogs.last?.duration ?? 600
                     let latestDurationMinutes = walkLogs.last?.durationMinutes ?? 15
 
-                    let distanceKiloMin = latestDistanceKilo * 0
-                    let distanceKiloMax = latestDistanceKilo * 1.2
-                    let durationMin = latestDuration * 0
-                    let durationMax = latestDuration * 2
+                    let distanceKiloMin = walkLogs.map{ $0.distanceKilo}.min() ?? 0
+                    let distanceKiloMax = walkLogs.map{ $0.distanceKilo}.max() ?? 0
 
-                    let durationMinutesMin = latestDurationMinutes*0
-                    let durationMinutesMax = latestDurationMinutes*1.2
+                    let durationMin = walkLogs.map { $0.duration }.min() ?? 0
+                    let durationMax = walkLogs.map { $0.duration }.max() ?? 0
+
+                    let durationMinutesMin = walkLogs.map { $0.durationMinutes }.min() ?? 0
+                    let durationMinutesMax = walkLogs.map { $0.durationMinutes }.max() ?? 0
     
 
                     // 🐾 散歩距離グラフ
