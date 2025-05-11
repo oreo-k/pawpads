@@ -59,7 +59,8 @@ struct ContentView: View {
                         Text("Distance: \(String(format: "%.2f", locationManager.distance)) m")
                             .font(.title3)
 
-                        WalkRouteMapView(locationManager: locationManager)
+                        // ✅ UIKitベースのMapViewをここに追加！
+                        UIKitWalkMapView(coordinates: locationManager.walkCoordinates)
                             .frame(height: 200)
                             .cornerRadius(12)
                             .padding()
@@ -185,6 +186,7 @@ struct ContentView: View {
             saveWalkLog()
         }
         locationManager.distance=0
+        locationManager.walkCoordinates.removeAll()
     }
 
     private func formatElapsedTime() -> String {
