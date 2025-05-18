@@ -16,7 +16,13 @@ struct ContentView: View {
 
     @StateObject private var locationManager = LocationManager()
     @Environment(\.managedObjectContext) private var viewContext
+    @State private var walkMapView: UIKitWalkMapView
 
+    init() {
+        let manager = LocationManager()
+        _locationManager = StateObject(wrappedValue: manager)
+        _walkMapView = State(initialValue: UIKitWalkMapView(locationManager: manager))
+    }
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \WalkLog.date, ascending: true)],
         animation: .default
@@ -59,8 +65,7 @@ struct ContentView: View {
                         Text("Distance: \(String(format: "%.2f", locationManager.distance)) m")
                             .font(.title3)
 
-                        // ✅ UIKitベースのMapViewをここに追加！
-                        UIKitWalkMapView(coordinates: locationManager.walkCoordinates)
+                        WalkMapViewRepresentable(locationManager: locationManager, mapView: walkMapView)
                             .frame(height: 200)
                             .cornerRadius(12)
                             .padding()
@@ -180,6 +185,7 @@ struct ContentView: View {
         locationManager.isWalking = false
         locationManager.isPaused = false
         timer?.invalidate()
+        walkMapView.stopWalk()
         timer = nil
 
         if save {

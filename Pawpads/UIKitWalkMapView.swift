@@ -1,156 +1,183 @@
-import SwiftUI
+import UIKit
 import MapKit
+import CoreLocation
+import Combine
 
-struct UIKitWalkMapView: UIViewRepresentable {
-    var coordinates: [CLLocationCoordinate2D]
+enum AnnotationType: String {
+    case start = "Start"
+    case goal = "Goal"
+    case paw = "paw"
 
-    func makeUIView(context: Context) -> MKMapView {
-        let mapView = MKMapView()
-        mapView.showsUserLocation = true
-        mapView.delegate = context.coordinator
-
-        if let loc = mapView.userLocation.location {
-            let region = MKCoordinateRegion(
-                center: loc.coordinate,
-                span: MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
-            )
-            mapView.setRegion(region, animated: false)
+    var symbolName: String {
+        switch self {
+        case .start: return "flag.circle"
+        case .goal: return "checkered.flag"
+        case .paw: return "pawprint.fill"
         }
-
-        return mapView
     }
 
-    func updateUIView(_ mapView: MKMapView, context: Context) {
-    // ✅ 1.既存オーバーレイを削除
-        mapView.removeOverlays(mapView.overlays)
-        mapView.removeAnnotations(mapView.annotations) // ← これを追加（重複防止）
-
-        // ✅ 2.折れ線の描画
-        let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
-        mapView.addOverlay(polyline)
-
-        // ✅ 3.スタートとゴールのピンを追加
-        if coordinates.count >= 2 {
-            let startPin = MKPointAnnotation()
-            startPin.coordinate = coordinates.first!
-            startPin.title = "Start"
-
-            let goalPin = MKPointAnnotation()
-            goalPin.coordinate = coordinates.last!
-            goalPin.title = "Goal"
-
-            mapView.addAnnotations([startPin, goalPin])
+    var tintColor: UIColor {
+        switch self {
+        case .start: return .systemGreen
+        case .goal: return .systemRed
+        case .paw: return .systemPink
         }
+    }
 
-        // 4. 通過点に小さな肉球アノテーションを追加
-        for coord in coordinates {
-            let paw = MKPointAnnotation()
-            paw.coordinate = coord
-            paw.title = "step"
-            mapView.addAnnotation(paw)
+    var symbolSize: CGFloat {
+        switch self {
+        case .start: return 20
+        case .goal: return 20
+        case .paw: return 14 // 肉球だけ小さめに
         }
+    }
 
-        // ✅ 5.中心位置を更新（最後の位置に合わせる）
-        if let last = coordinates.last {
-            let region = MKCoordinateRegion(
-                center: last,
-                span: MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
-            )
+    var symbolWeight: UIImage.SymbolWeight {
+        switch self {
+        case .start: return .semibold
+        case .goal: return .semibold
+        case .paw: return .regular
+        }
+    }
+}
+
+
+class UIKitWalkMapView: UIView, MKMapViewDelegate {
+    private let mapView = MKMapView()
+    private var cancellables = Set<AnyCancellable>()
+
+    private var lastPawprintCoordinate: CLLocation?
+    private var hasCenteredOnUser = false
+    private var startCoordinate: CLLocationCoordinate2D?
+    private var currentUserLocation: CLLocation?
+
+    init(locationManager: LocationManager) {
+        super.init(frame: .zero)
+        setupMapView()
+        bindToLocationManager(locationManager)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func setupMapView() {
+        mapView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(mapView)
+        NSLayoutConstraint.activate([
+            mapView.topAnchor.constraint(equalTo: topAnchor),
+            mapView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            mapView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            mapView.trailingAnchor.constraint(equalTo: trailingAnchor)
+        ])
+
+        mapView.delegate = self
+        mapView.showsUserLocation = true
+    }
+
+    private func bindToLocationManager(_ locationManager: LocationManager) {
+        locationManager.$currentLocation
+            .compactMap { $0 }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] coordinate in
+                self?.handleLocationUpdate(coordinate)
+            }
+            .store(in: &cancellables)
+    }
+
+    private func handleLocationUpdate(_ coordinate: CLLocationCoordinate2D) {
+        let current = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        currentUserLocation = current
+
+        if !hasCenteredOnUser {
+            hasCenteredOnUser = true
+            let region = MKCoordinateRegion(center: coordinate,
+                                            latitudinalMeters: 1000,
+                                            longitudinalMeters: 1000)
             mapView.setRegion(region, animated: true)
         }
-    }
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator()
-    }
-
-    class Coordinator: NSObject, MKMapViewDelegate {
-        func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
-            if let polyline = overlay as? MKPolyline {
-                let renderer = MKPolylineRenderer(polyline: polyline)
-                renderer.strokeColor = UIColor.systemBlue
-                renderer.lineWidth = 4
-                return renderer
-            }
-            return MKOverlayRenderer()
+        if startCoordinate == nil {
+            startCoordinate = coordinate
+            addAnnotation(at: coordinate, title: "Start")
+            lastPawprintCoordinate = current
+            return
         }
 
-        // ✅ 現在地を肉球＋30x30＋影で表示
-        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-            // 1. 現在地カスタマイズ（肉球）
-            if annotation is MKUserLocation {
-                let identifier = "UserLocation"
-                var view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
-
-                if view == nil {
-                    view = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-
-                    let config = UIImage.SymbolConfiguration(pointSize: 16, weight: .bold)
-                    let pawImage = UIImage(systemName: "pawprint.fill", withConfiguration: config)
-
-                    let imageView = UIImageView(image: pawImage)
-                    imageView.tintColor = .systemBlue
-                    imageView.layer.cornerRadius = 15
-                    imageView.clipsToBounds = true
-                    imageView.layer.shadowColor = UIColor.black.cgColor
-                    imageView.layer.shadowOpacity = 0.25
-                    imageView.layer.shadowOffset = CGSize(width: 1, height: 1)
-                    imageView.layer.shadowRadius = 2
-                    imageView.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
-
-                    view?.addSubview(imageView)
-                    view?.frame = imageView.frame
-                } else {
-                    view?.annotation = annotation
-                }
-
-                return view
+        /*
+        // 現在地と肉球の位置が近すぎる場合は追加しない（例：半径5m以内）
+        if let userLocation = currentUserLocation {
+            let distanceToUser = current.distance(from: userLocation)
+            if distanceToUser < 5 {
+                return
             }
+        }
+        */
 
-            // 2. Start / Goal ピン（カラーマーカー）
-            if let title = annotation.title ?? "" {
-                if title == "Start" || title == "Goal" {
-                    let identifier = "StartGoalPin"
-                    var pin = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView
-
-                    if pin == nil {
-                        pin = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-                        pin?.canShowCallout = true
-                    } else {
-                        pin?.annotation = annotation
-                    }
-
-                    if title == "Start" {
-                        pin?.markerTintColor = .systemGreen
-                        pin?.glyphText = "S"
-                    } else if title == "Goal" {
-                        pin?.markerTintColor = .systemRed
-                        pin?.glyphText = "G"
-                    }
-
-                    return pin
-                }
-
-                // 3. 通過点（小さな肉球）
-                if title == "step" {
-                    let identifier = "StepDot"
-                    var view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
-
-                    if view == nil {
-                        view = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-                        view?.image = UIImage(systemName: "pawprint.fill")
-                        view?.tintColor = .gray
-                        view?.frame.size = CGSize(width: 14, height: 14)
-                    } else {
-                        view?.annotation = annotation
-                    }
-
-                    return view
-                }
+        if let last = lastPawprintCoordinate {
+            let distance = current.distance(from: last)
+            if distance >= 10 {
+                addAnnotation(at: coordinate, title: "paw")
+                lastPawprintCoordinate = current
             }
+        } else {
+            addAnnotation(at: coordinate, title: "paw")
+            lastPawprintCoordinate = current
+        }
+    }
 
+    func stopWalk() {
+        if let last = lastPawprintCoordinate?.coordinate {
+            addAnnotation(at: last, title: "Goal")
+        }
+
+        // "Start", "paw", "Goal" などのアノテーションを削除（現在地以外）
+        let annotationsToRemove = mapView.annotations.filter { !($0 is MKUserLocation) }
+        mapView.removeAnnotations(annotationsToRemove)
+
+        lastPawprintCoordinate = nil
+        startCoordinate = nil
+    }
+
+    private func addAnnotation(at coordinate: CLLocationCoordinate2D, title: String) {
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = coordinate
+        annotation.title = title
+        mapView.addAnnotation(annotation)
+    }
+
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        if annotation is MKUserLocation {
             return nil
         }
 
+        let identifier = "customAnnotation"
+        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+
+        if annotationView == nil {
+            annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+            annotationView?.canShowCallout = false
+        } else {
+            annotationView?.annotation = annotation
+        }
+
+        if let title = annotation.title ?? "",
+        let type = AnnotationType(rawValue: title) {
+
+            // 1. Symbolのサイズ＋太さ設定
+            let config = UIImage.SymbolConfiguration(pointSize: type.symbolSize,
+                                                    weight: type.symbolWeight)
+
+            // 2. シンボル画像を生成
+            if let baseImage = UIImage(systemName: type.symbolName, withConfiguration: config) {
+
+                // 3. 色を“焼き付けた”画像を生成して設定（これで黒くならない！）
+                let coloredImage = baseImage
+                    .withTintColor(type.tintColor, renderingMode: .alwaysOriginal)
+
+                annotationView?.image = coloredImage
+            }
+        }
+        return annotationView
     }
 }
