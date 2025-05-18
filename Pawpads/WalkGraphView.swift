@@ -22,10 +22,9 @@ struct WalkGraphView: View {
 
                     let durationMin = walkLogs.map { $0.duration }.min() ?? 0
                     let durationMax = walkLogs.map { $0.duration }.max() ?? 0
-
+                    
                     let durationMinutesMin = walkLogs.map { $0.durationMinutes }.min() ?? 0
                     let durationMinutesMax = walkLogs.map { $0.durationMinutes }.max() ?? 0
-    
 
                     // 🐾 散歩距離グラフ
                     VStack(alignment: .leading) {

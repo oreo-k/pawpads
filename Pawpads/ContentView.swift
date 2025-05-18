@@ -10,13 +10,19 @@ struct ContentView: View {
     @State private var timer: Timer? = nil
     @State private var showSaveAlert = false
     @State private var region = MKCoordinateRegion(
-    center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), // 初期値（例: サンフランシスコ）
-    span: MKCoordinateSpan(latitudeDelta: 0.003, longitudeDelta: 0.003)
+    center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), // 初期値（例: Portland）
+    span: MKCoordinateSpan(latitudeDelta: 0.0001, longitudeDelta: 0.0001)
     )
 
     @StateObject private var locationManager = LocationManager()
     @Environment(\.managedObjectContext) private var viewContext
+    @State private var walkMapView: UIKitWalkMapView
 
+    init() {
+        let manager = LocationManager()
+        _locationManager = StateObject(wrappedValue: manager)
+        _walkMapView = State(initialValue: UIKitWalkMapView(locationManager: manager))
+    }
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \WalkLog.date, ascending: true)],
         animation: .default
@@ -59,7 +65,7 @@ struct ContentView: View {
                         Text("Distance: \(String(format: "%.2f", locationManager.distance)) m")
                             .font(.title3)
 
-                        CurrentLocationMapView(locationManager: locationManager)
+                        WalkMapViewRepresentable(locationManager: locationManager, mapView: walkMapView)
                             .frame(height: 200)
                             .cornerRadius(12)
                             .padding()
@@ -129,6 +135,12 @@ struct ContentView: View {
                     Image(systemName: "gearshape.fill")
                     Text("Setting")
                 }
+
+            DebugTestMapView()
+                .tabItem {
+                    Image(systemName: "location.circle")
+                    Text("Test Map")
+    }
         }
         .alert("Do you want to save?", isPresented: $showSaveAlert) {
             Button("Discard", role: .cancel) {
@@ -173,12 +185,14 @@ struct ContentView: View {
         locationManager.isWalking = false
         locationManager.isPaused = false
         timer?.invalidate()
+        walkMapView.stopWalk()
         timer = nil
 
         if save {
             saveWalkLog()
         }
         locationManager.distance=0
+        locationManager.walkCoordinates.removeAll()
     }
 
     private func formatElapsedTime() -> String {
